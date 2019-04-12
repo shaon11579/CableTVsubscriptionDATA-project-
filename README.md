@@ -6,6 +6,66 @@ Omer Khan (oakhan)
 Jennifer Tichenor (jtchnor2)
 
 
+***********
+rm(list=ls())
+library(readr)
+CableTVSubscribersData <- read_csv("CableTVSubscribersData.csv")
+CA <- read.csv
+
+CT <- read.csv('/Users/mhasan1/Desktop/CableTVSubscribersData.csv',header=TRUE)
+CT
+summary(CT)
+nrow(CT)
+CT2<- na.omit(CT)
+nrow(CT2)
+library(expss)
+
+#run percentages
+
+install.packages("expss")
+library(expss)
+Percent_Male <- count_if("Male", CT$gender)/nrow(CT)
+Percent_Male
+Percent_Female <- 1 - Percent_Male
+Percent_Female
+#new data is same as original data
+#no NA values confirmed
+#use original CableTVSubscriberData for further calculations
+
+#percentages for character types
+#check factors
+
+
+factor(CT$gender)
+factor(CT$ownHome)
+factor(CT$subscribe)
+factor(CT$Segment)
+Percent_Own <- count_if("ownYes", CT$ownHome)/nrow(CT)
+Percent_Own 
+Percent_OwnNo <- 1 - Percent_Own
+Percent_OwnNo
+#only 2 factors makes “1 – “ work
+Percent_Sub <- count_if("subYes", CT$subscribe)/nrow(CT)
+Percent_Sub 
+Percent_SubNo <- 1 - Percent_Sub
+Percent_SubNo
+Percent_SegMovUp <- count_if("Moving up", CT$Segment)/nrow(CT)
+
+Percent_SegSuburb <- count_if("Suburb mix", CT$Segment)/nrow(CT)
+Percent_SegSuburb
+Percent_SegTrav <- count_if("Travelers", CT$Segment)/nrow(CT)
+Percent_SegTrav
+Percent_SegUrban <- count_if("Urban hip", CT$Segment)/nrow(CT)
+Percent_SegUrban
+
+#more than two factors; reason not “1 – “
+Percent_SegMovUp
+Percent_SegSuburb
+Percent_SegTrav
+Percent_SegUrban
+
+**************
+
 Predicting Cable Subscriptions
 Using information regarding an individual’s age, gender, income, home ownership, class segment, and number of children, we plan to predict whether or not the individual will subscribe to cable. 
 https://www.kaggle.com/amansaxena/cabletv-subscriber-data
@@ -31,163 +91,39 @@ o	17% selected urban,
 o	23% chose transitioning or “moving up,” and
 o	33% selected suburb.
  
-R code:
-rm(list=ls())
-
-library(readr)
-
-#read/import csv file into R
-CT <- read.csv('/Users/mhasan1/Desktop/CableTVSubscribersData.csv',header=TRUE)
-CT
-summary(CT)
-nrow(CT)
-CT2<- na.omit(CT)
-nrow(CT2)
-library(expss)
-install.packages("expss")
-library(expss)
-Percent_Male <- count_if("Male", CT$gender)/nrow(CT)
-Percent_Male
-Percent_Female <- 1 - Percent_Male
-Percent_Female
-
+ ***********************
+ 
+ #Pridictive Analysis/ cable Tv Subscription 
 #determine number of rows
 nrow(CT)
+nrow < 2500
+CT2 <- CT
 
-#nrow < 2500; no volume restriction needed
+#assign numbers to levels
+#1 = moving up
+#2 = suburb mix
+#3 = travelers
+#4 = urban hip
+group_seg <- factor(CT2$Segment)
+#group_seg -> moving up = 1, suburb mix = 2, travelers = 3, urban hip = 4
+levels(group_seg) <- c(1,2,3,4)
+CT$Segment <- group_seg
+CT$Segment
+#begin cluster with age, income, kids, segment
+#cannot plot list
+library(stats)
+library(cluster)
+install.packages("stats")
+install.packages("cluster")
 
-summary(CT)
+inputs_age_inc_kid_seg <- c("age", "income", "kids", "Segment")
+newCable <- CT2[inputs_age_inc_kid_seg]
+plot(newCable)
+newCable3 <- kmeans(newCable, 3)
+ 
+ 
+ ****************
 
-#summary shows no NA values
-#double check by running na.omit and recounting rows
-
-CT2 <- na.omit(CT)
-nrow(CT2)
-
-#new data is same as original data
-#no NA values confirmed
-#use original CableTVSubscriberData for further calculations
-
-#percentages for character types
-#check factors
-
-factor(CableTVSubscribersData$gender)
-#returns levels Male Female
-#omitted from output report below
-factor(CableTVSubscribersData$ownHome)
-#returns ownNo ownYes
-#omitted from output report below
-factor(CableTVSubscribersData$subscribe)
-#returns subNo subYes 
-#subNo subYes will be our on/off end goal for categories
-#omitted from output report below
-factor(CableTVSubscribersData$Segment)
-#returns "Moving up" "Suburb mix" "Travelers" "Urban hip"
-#omitted from output report below
-
-library(expss)
-#run percentages
-Percent_Male <- count_if("Male", CableTVSubscribersData$gender)/nrow(CableTVSubscribersData)
-Percent_Male
-Percent_Female <- 1 - Percent_Male
-#only 2 factors makes “1 – “ work
-Percent_Female
-
-Percent_Own <- count_if("ownYes", CableTVSubscribersData$ownHome)/nrow(CableTVSubscribersData)
-Percent_Own
-Percent_OwnNo <- 1 - Percent_Own
-#only 2 factors makes “1 – “ work
-Percent_OwnNo
-
-Percent_Sub <- count_if("subYes", CableTVSubscribersData$subscribe)/nrow(CableTVSubscribersData)
-Percent_Sub
-Percent_SubNo <- 1 - Percent_Sub
-#only 2 factors makes “1 – “ work
-Percent_SubNo
-
-Percent_SegMovUp <- count_if("Moving up", CableTVSubscribersData$Segment)/nrow(CableTVSubscribersData)
-Percent_SegSuburb <- count_if("Suburb mix", CableTVSubscribersData$Segment)/nrow(CableTVSubscribersData)
-Percent_SegTrav <- count_if("Travelers", CableTVSubscribersData$Segment)/nrow(CableTVSubscribersData)
-Percent_SegUrban <- count_if("Urban hip", CableTVSubscribersData$Segment)/nrow(CableTVSubscribersData)
-
-#more than two factors; reason not “1 – “
-Percent_SegMovUp
-Percent_SegSuburb
-Percent_SegTrav
-Percent_SegUrban
-Output:
-> rm(list=ls())
-> library(readr)
-> CableTVSubscribersData <- read_csv("CableTVSubscribersData.csv")
-Parsed with column specification:
-cols(
-  age = col_double(),
-  gender = col_character(),
-  income = col_double(),
-  kids = col_double(),
-  ownHome = col_character(),
-  subscribe = col_character(),
-  Segment = col_character()
-)
-> nrow(CableTVSubscribersData)
-[1] 300
-> summary(CableTVSubscribersData)
-age	gender	income	kids	ownHome
-Min.:	19.26	Length:	300	Min.:	-5183	Min.:	0	Length:	300
-1stQu.:	33.01	Class:	character	1stQu.:	39656	1stQu.:	0	Class:	character
-Median:	39.49	Mode:	character	Median:	52014	Median:	1	Mode:	character
-Mean:	41.2	 	 	Mean:	50937	Mean:	1.27	 	 
-3rdQu.:	47.9	 	 	3rdQu.:	61403	3rdQu.:	2	 	 
-Max.:	80.49	 	 	Max.:	114278	Max.:	7	 	 
-
-subscribe	Segment
-Length:	300	Length:	300
-Class:	character	Class:	character
-Mode:	character	Mode:	character
-
-> CableTVSubscriber2 <- na.omit(CableTVSubscribersData)
-> nrow(CableTVSubscriber2)
-[1] 300
-> 
-
-
-> library(expss)
-> #run percentages
-> Percent_Male <- count_if("Male", CableTVSubscribersData$gender)/nrow(CableTVSubscribersData)
-> Percent_Male
-[1] 0.4766667
-> Percent_Female <- 1 - Percent_Male
-> Percent_Female
-[1] 0.5233333
-> 
-> Percent_Own <- count_if("ownYes", CableTVSubscribersData$ownHome)/nrow(CableTVSubscribersData)
-> Percent_Own
-[1] 0.47
-> Percent_OwnNo <- 1 - Percent_Own
-> Percent_OwnNo
-[1] 0.53
-> 
-> Percent_Sub <- count_if("subYes", CableTVSubscribersData$subscribe)/nrow(CableTVSubscribersData)
-> Percent_Sub
-[1] 0.1333333
-> Percent_SubNo <- 1 - Percent_Sub
-> Percent_SubNo
-[1] 0.8666667
-> 
-> Percent_SegMovUp <- count_if("Moving up", CableTVSubscribersData$Segment)/nrow(CableTVSubscribersData)
-> Percent_SegSuburb <- count_if("Suburb mix", CableTVSubscribersData$Segment)/nrow(CableTVSubscribersData)
-> Percent_SegTrav <- count_if("Travelers", CableTVSubscribersData$Segment)/nrow(CableTVSubscribersData)
-> Percent_SegUrban <- count_if("Urban hip", CableTVSubscribersData$Segment)/nrow(CableTVSubscribersData)
-> 
-> Percent_SegMovUp
-[1] 0.2333333
-> Percent_SegSuburb
-[1] 0.3333333
-> Percent_SegTrav
-[1] 0.2666667
-> Percent_SegUrban
-[1] 0.1666667
-> 
 #Part 2 
 
 Appendix - R
