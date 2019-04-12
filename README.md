@@ -37,20 +37,32 @@ rm(list=ls())
 library(readr)
 
 #read/import csv file into R
-CableTVSubscribersData <- read_csv("CableTVSubscribersData.csv")
+CT <- read.csv('/Users/mhasan1/Desktop/CableTVSubscribersData.csv',header=TRUE)
+CT
+summary(CT)
+nrow(CT)
+CT2<- na.omit(CT)
+nrow(CT2)
+library(expss)
+install.packages("expss")
+library(expss)
+Percent_Male <- count_if("Male", CT$gender)/nrow(CT)
+Percent_Male
+Percent_Female <- 1 - Percent_Male
+Percent_Female
 
 #determine number of rows
-nrow(CableTVSubscribersData)
+nrow(CT)
 
 #nrow < 2500; no volume restriction needed
 
-summary(CableTVSubscribersData)
+summary(CT)
 
 #summary shows no NA values
 #double check by running na.omit and recounting rows
 
-CableTVSubscriber2 <- na.omit(CableTVSubscribersData)
-nrow(CableTVSubscriber2)
+CT2 <- na.omit(CT)
+nrow(CT2)
 
 #new data is same as original data
 #no NA values confirmed
